@@ -47,10 +47,15 @@ This knowledge is difficult to find because it is scattered across many websites
      A review-heavy corpus warrants different chunking than a long FAQ. -->
 
 **Chunk size:**
+500 tokens (approx. 2,000–3,000 characters)
 
 **Overlap:**
+100 tokens (approx. 400–500 characters)
 
 **Reasoning:**
+This domain consists mainly of Reddit posts, housing guides, and student-written advice, which tend to be medium-length and contain multiple related details (price, neighborhood, landlord experience, safety, commute). A 500-token chunk is large enough to preserve full context within a single idea (e.g., a housing recommendation or scam warning) while still being small enough for precise retrieval.
+
+The 100-token overlap helps maintain continuity across chunk boundaries, especially for longer Reddit threads or guides where relevant information may be split between paragraphs. This reduces the risk of losing key context such as conditions, exceptions, or follow-up explanations.
 
 ---
 
@@ -62,11 +67,20 @@ This knowledge is difficult to find because it is scattered across many websites
      would you weigh in choosing a different embedding model — context length, multilingual
      support, accuracy on domain-specific text, latency? -->
 
+
 **Embedding model:**
+`sentence-transformers/all-MiniLM-L6-v2` (local embedding model via SentenceTransformers)
 
 **Top-k:**
+5–8 chunks per query (default: 6)
 
 **Production tradeoff reflection:**
+In a production system, the choice of embedding model would involve balancing accuracy, cost, latency, and domain fit. A stronger model (such as OpenAI text-embedding models or larger SentenceTransformer variants) could improve semantic understanding of informal student language, slang, and nuanced housing complaints, which are common in Reddit-style data. However, these improvements often come with higher cost and increased latency.
+
+Context length also matters: models with better handling of longer inputs may reduce the need for aggressive chunking, while multilingual support would be important if the system expands beyond English-speaking student communities. Additionally, domain-specific fine-tuning could significantly improve retrieval quality for housing-related terminology (e.g., lease terms, neighborhood names, scam patterns), but would require additional training data and infrastructure complexity.
+
+For this project, a lightweight local model is preferred to ensure fast retrieval, reproducibility, and zero API dependency while still maintaining strong baseline semantic search quality.
+
 
 ---
 
